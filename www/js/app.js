@@ -31,29 +31,101 @@ angular.module('starter', ['ionic'])
 
     }])
 
-    .controller('MyCtrl', function ($scope, localStorageService, $ionicTabsDelegate) {
+    .controller('MyCtrl', function ($scope, localStorageService, $ionicTabsDelegate, $ionicPopup, $ionicModal) {
 
         $scope.data = {};
+        $scope.shouldShowDelete = false;
 
         $scope.getTodos = function () {
             $scope.todos = localStorageService.get('todos');
         };
 
+        function getNextId() {
+            var todos = localStorageService.get('todos') || [];
+            var id = todos.length !== 0 ? todos[todos.length - 1].id : 0;
+            return ++id;
+        }
 
+        $ionicModal.fromTemplateUrl('templates/update.html', {
+            scope: $scope,
+            animation: 'slide-in-up'
+        }).then(function (modal) {
+            $scope.editModal = modal;
+        });
+
+        $scope.openEditModal = function (id) {
+            for (var i = 0; i < $scope.todos.length; i++) {
+                if ($scope.todos[i].id === id) {
+                    $scope.data.newtodo = $scope.todos[i].value;
+                    $scope.data.toUpdateId = $scope.todos[i].id;
+                }
+            }
+            $scope.editModal.show();
+        };
+
+        $scope.closeEditModal = function () {
+            $scope.editModal.hide();
+        };
+        // Cleanup the modal when we're done with it!
+        $scope.$on('$destroy', function () {
+            $scope.editModal.remove();
+        });
+        // Execute action on hide modal
+        $scope.$on('modal.hidden', function () {
+            // Execute action
+        });
+        // Execute action on remove modal
+        $scope.$on('modal.removed', function () {
+            // Execute action
+        });
+
+        $scope.editTodo = function () {
+            var id = $scope.data.toUpdateId;
+            for (var i = 0; i < $scope.todos.length; i++) {
+                if ($scope.todos[i].id === id) {
+                    $scope.todos[i].value = $scope.data.newtodo;
+                }
+            }
+            localStorageService.set('todos', $scope.todos);
+            $scope.closeEditModal();
+        }
 
         $scope.setTodo = function () {
             if ($scope.data.newtodo) {
-                var todos = localStorageService.get('todos');
-                if (!todos) {
-                    todos = {};
+                var todos = localStorageService.get('todos') || [];
+                var id = getNextId();
+                var obj = {
+                    id: id,
+                    value: $scope.data.newtodo
                 }
-                todos['3'] = $scope.data.newtodo;
+                todos.push(obj);
                 $scope.data.newtodo = "";
                 localStorageService.set('todos', todos);
-                $ionicTabsDelegate.select(0);
+                // $ionicTabsDelegate.select(0);
                 $scope.getTodos();
             }
         };
+
+        $scope.confirmDelete = function () {
+            var confirmPopup = $ionicPopup.confirm({
+                title: 'Delete Todo',
+                template: 'Are you sure to delete this todo?'
+            });
+            return confirmPopup.then(function (res) {
+                return res;
+            });
+        };
+
+        $scope.deleteTodo = function (id) {
+            $scope.confirmDelete().then(function (res) {
+                if (res) {
+                    $scope.todos = $scope.todos.filter((item) => item.id !== id);
+                    localStorageService.set('todos', $scope.todos);
+                }
+            }, function (err) {
+                console.log(err);
+            });
+        }
     })
 
     .factory('localStorageService', [function () {

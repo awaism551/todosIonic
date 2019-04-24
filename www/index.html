@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <title></title>
+    <title>Todo App</title>
 
     <link rel="manifest" href="manifest.json">
 
@@ -42,12 +42,20 @@
 
             <ion-tab title="List" ng-init="getTodos()">
                 <ion-content>
-
-                    <ion-list>
-                        <ion-item ng-repeat="todo in todos">
-                            Todo, {{todo}}!
+                    <ion-toggle ng-model="shouldShowDelete">
+                        Show Delete?
+                    </ion-toggle>
+                    <ion-list show-delete="shouldShowDelete">
+                        <ion-item ng-repeat="todo in todos" class="item-thumbnail-left">
+                            Todo, {{todo.value}}!
+                            <ion-option-button class="button-info" ng-click="openEditModal(todo.id)">
+                                Edit
+                            </ion-option-button>
+                            <ion-delete-button class="ion-minus-circled" ng-click="deleteTodo(todo.id)">
+                            </ion-delete-button>
                         </ion-item>
                     </ion-list>
+
                 </ion-content>
             </ion-tab>
             <ion-tab title="Create New">

@@ -1,0 +1,11 @@
+<ion-modal-view>
+    <ion-header-bar>
+        <h1 class="title">Update Todo</h1>
+    </ion-header-bar>
+    <ion-content>
+        <form ng-submit="editTodo()">
+            <input type="text" placeholder="Update todo" ng-model="data.newtodo">
+            <input type="submit" value="Update" ng-disabled="!data.newtodo">
+        </form>
+    </ion-content>
+</ion-modal-view>
