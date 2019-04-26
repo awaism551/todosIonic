@@ -31,6 +31,7 @@
     <script src="cordova.js"></script>
 
     <!-- your app's js -->
+    <script src="js/ionic-close-popup.js"></script>
     <script src="js/app.js"></script>
 </head>
 
@@ -51,7 +52,8 @@
                             <ion-option-button class="button-info" ng-click="openEditModal(todo.id)">
                                 Edit
                             </ion-option-button>
-                            <ion-delete-button class="ion-minus-circled" ng-click="deleteTodo(todo.id)">
+                            <ion-delete-button class="ion-minus-circled" ng-click="deleteTodo(todo.id)"
+                                ng-disabled="data.disableAll">
                             </ion-delete-button>
                         </ion-item>
                     </ion-list>

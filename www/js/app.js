@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('starter', ['ionic', 'ionic.closePopup'])
 
     .run(function ($ionicPlatform) {
         $ionicPlatform.ready(function () {
@@ -31,10 +31,11 @@ angular.module('starter', ['ionic'])
 
     }])
 
-    .controller('MyCtrl', function ($scope, localStorageService, $ionicTabsDelegate, $ionicPopup, $ionicModal) {
+    .controller('MyCtrl', function ($scope, localStorageService, $ionicTabsDelegate, $ionicPopup, $ionicModal, IonicClosePopupService) {
 
         $scope.data = {};
         $scope.shouldShowDelete = false;
+        $scope.data.disableAll = false;
 
         $scope.getTodos = function () {
             $scope.todos = localStorageService.get('todos');
@@ -70,14 +71,6 @@ angular.module('starter', ['ionic'])
         $scope.$on('$destroy', function () {
             $scope.editModal.remove();
         });
-        // Execute action on hide modal
-        $scope.$on('modal.hidden', function () {
-            // Execute action
-        });
-        // Execute action on remove modal
-        $scope.$on('modal.removed', function () {
-            // Execute action
-        });
 
         $scope.editTodo = function () {
             var id = $scope.data.toUpdateId;
@@ -111,20 +104,26 @@ angular.module('starter', ['ionic'])
                 title: 'Delete Todo',
                 template: 'Are you sure to delete this todo?'
             });
+            IonicClosePopupService.register(confirmPopup);
             return confirmPopup.then(function (res) {
                 return res;
             });
         };
 
         $scope.deleteTodo = function (id) {
-            $scope.confirmDelete().then(function (res) {
-                if (res) {
-                    $scope.todos = $scope.todos.filter((item) => item.id !== id);
-                    localStorageService.set('todos', $scope.todos);
-                }
-            }, function (err) {
-                console.log(err);
-            });
+            console.log('del fun');
+            if (!$scope.data.disableAll) {
+                $scope.data.disableAll = true;
+                $scope.confirmDelete().then(function (res) {
+                    if (res) {
+                        $scope.todos = $scope.todos.filter((item) => item.id !== id);
+                        localStorageService.set('todos', $scope.todos);
+                    }
+                    $scope.data.disableAll = false;
+                }, function (err) {
+                    console.log(err);
+                });
+            }
         }
     })
 
