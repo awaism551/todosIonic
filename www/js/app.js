@@ -31,7 +31,7 @@ angular.module('starter', ['ionic', 'ionic.closePopup'])
 
     }])
 
-    .controller('MyCtrl', function ($scope, localStorageService, $ionicTabsDelegate, $ionicPopup, $ionicModal, IonicClosePopupService) {
+    .controller('MyCtrl', function ($scope, localStorageService, $ionicTabsDelegate, $ionicPopup, $ionicModal, IonicClosePopupService, $ionicListDelegate) {
 
         $scope.data = {};
         $scope.shouldShowDelete = false;
@@ -70,6 +70,13 @@ angular.module('starter', ['ionic', 'ionic.closePopup'])
         // Cleanup the modal when we're done with it!
         $scope.$on('$destroy', function () {
             $scope.editModal.remove();
+        });
+
+        // Execute action on hide modal
+        $scope.$on('modal.hidden', function () {
+            console.log('modal hidden');
+            $scope.data.newtodo = "";
+            $ionicListDelegate.closeOptionButtons();
         });
 
         $scope.editTodo = function () {
