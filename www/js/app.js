@@ -49,7 +49,8 @@ angular.module('starter', ['ionic', 'ionic.closePopup'])
 
         $ionicModal.fromTemplateUrl('templates/update.html', {
             scope: $scope,
-            animation: 'slide-in-up'
+            animation: 'slide-in-up',
+            focusFirstInput: true
         }).then(function (modal) {
             $scope.editModal = modal;
         });
@@ -74,7 +75,6 @@ angular.module('starter', ['ionic', 'ionic.closePopup'])
 
         // Execute action on hide modal
         $scope.$on('modal.hidden', function () {
-            console.log('modal hidden');
             $scope.data.newtodo = "";
             $ionicListDelegate.closeOptionButtons();
         });
@@ -118,7 +118,6 @@ angular.module('starter', ['ionic', 'ionic.closePopup'])
         };
 
         $scope.deleteTodo = function (id) {
-            console.log('del fun');
             if (!$scope.data.disableAll) {
                 $scope.data.disableAll = true;
                 $scope.confirmDelete().then(function (res) {
