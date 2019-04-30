@@ -1,0 +1,22 @@
+<ion-view title="Add New Todo to your List" ng-init="setFocus()">
+    <ion-nav-buttons side="left">
+        <button class="left button button-icon icon ion-arrow-left-c" ng-click="back()"></button>
+    </ion-nav-buttons>
+    <ion-content>
+        <div>
+            <form ng-submit="setTodo()">
+                <div class="list list-inset">
+                    <label class="item item-input">
+                        <input ng-model="data.newtodo" type="text" placeholder="Enter New Todo here"
+                            id="newtodoInput" />
+                    </label>
+                </div>
+                <div class="padding-left padding-right">
+                    <div class="button-bar">
+                        <input type="submit" class="button" value="Add" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </ion-content>
+</ion-view>

@@ -25,27 +25,30 @@ angular.module('starter', ['ionic', 'ionic.closePopup'])
         });
     })
 
-    .config(['$ionicConfigProvider', function ($ionicConfigProvider) {
-
-        $ionicConfigProvider.tabs.position('bottom');
-
-    }])
+    .config(function ($stateProvider, $urlRouterProvider) {
+        $stateProvider
+            .state("list", {
+                url: "/list",
+                templateUrl: "templates/list.html",
+                controller: "MyCtrl",
+                cache: false
+            })
+            .state("create", {
+                url: "/create",
+                templateUrl: "templates/create.html",
+                controller: "createController",
+                cache: false
+            });
+        $urlRouterProvider.otherwise("list");
+    })
 
     .controller('MyCtrl', function ($scope, localStorageService, $ionicTabsDelegate, $ionicPopup, $ionicModal, IonicClosePopupService, $ionicListDelegate) {
 
         $scope.data = {};
-        $scope.shouldShowDelete = false;
-        $scope.data.disableAll = false;
 
         $scope.getTodos = function () {
             $scope.todos = localStorageService.get('todos');
         };
-
-        function getNextId() {
-            var todos = localStorageService.get('todos') || [];
-            var id = todos.length !== 0 ? todos[todos.length - 1].id : 0;
-            return ++id;
-        }
 
         $ionicModal.fromTemplateUrl('templates/update.html', {
             scope: $scope,
@@ -90,22 +93,6 @@ angular.module('starter', ['ionic', 'ionic.closePopup'])
             $scope.closeEditModal();
         }
 
-        $scope.setTodo = function () {
-            if ($scope.data.newtodo) {
-                var todos = localStorageService.get('todos') || [];
-                var id = getNextId();
-                var obj = {
-                    id: id,
-                    value: $scope.data.newtodo
-                }
-                todos.push(obj);
-                $scope.data.newtodo = "";
-                localStorageService.set('todos', todos);
-                // $ionicTabsDelegate.select(0);
-                $scope.getTodos();
-            }
-        };
-
         $scope.confirmDelete = function () {
             var confirmPopup = $ionicPopup.confirm({
                 title: 'Delete Todo',
@@ -118,18 +105,49 @@ angular.module('starter', ['ionic', 'ionic.closePopup'])
         };
 
         $scope.deleteTodo = function (id) {
-            if (!$scope.data.disableAll) {
-                $scope.data.disableAll = true;
-                $scope.confirmDelete().then(function (res) {
-                    if (res) {
-                        $scope.todos = $scope.todos.filter((item) => item.id !== id);
-                        localStorageService.set('todos', $scope.todos);
-                    }
-                    $scope.data.disableAll = false;
-                }, function (err) {
-                    console.log(err);
-                });
+            $scope.confirmDelete().then(function (res) {
+                if (res) {
+                    $scope.todos = $scope.todos.filter((item) => item.id !== id);
+                    localStorageService.set('todos', $scope.todos);
+                }
+                $ionicListDelegate.closeOptionButtons();
+            }, function (err) {
+                console.error(err);
+                $ionicListDelegate.closeOptionButtons();
+
+            });
+
+        }
+    })
+
+    .controller('createController', function ($scope, $ionicHistory, localStorageService, $state) {
+        $scope.data = {};
+        $scope.setTodo = function () {
+            if ($scope.data.newtodo) {
+                var todos = localStorageService.get('todos') || [];
+                var id = getNextId();
+                var obj = {
+                    id: id,
+                    value: $scope.data.newtodo
+                }
+                todos.push(obj);
+                $scope.data.newtodo = "";
+                localStorageService.set('todos', todos);
             }
+        };
+
+        function getNextId() {
+            var todos = localStorageService.get('todos') || [];
+            var id = todos.length !== 0 ? todos[todos.length - 1].id : 0;
+            return ++id;
+        };
+
+        $scope.back = function () {
+            $state.go("list");
+        };
+
+        $scope.setFocus = function () {
+            document.getElementById("newtodoInput").focus();
         }
     })
 

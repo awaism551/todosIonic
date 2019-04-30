@@ -4,8 +4,20 @@
     </ion-header-bar>
     <ion-content>
         <form ng-submit="editTodo()">
-            <input type="text" placeholder="Update todo" ng-model="data.newtodo">
-            <input type="submit" value="Update" ng-disabled="!data.newtodo">
+            <!-- <input type="text" placeholder="Update todo" ng-model="data.newtodo"> -->
+            <!-- <input type="submit" value="Update" ng-disabled="!data.newtodo" class="button button-calm"> -->
+            <div class="list">
+
+                <div class="item item-input-inset">
+                    <label class="item-input-wrapper">
+                        <input type="text" placeholder="Update todo" ng-model="data.newtodo">
+                    </label>
+                    <button class="button button-small" type="submit" ng-disabled="!data.newtodo">
+                        Update
+                    </button>
+                </div>
+
+            </div>
         </form>
     </ion-content>
 </ion-modal-view>
