@@ -133,6 +133,15 @@ angular.module('starter', ['ionic', 'ionic.closePopup'])
                 todos.push(obj);
                 $scope.data.newtodo = "";
                 localStorageService.set('todos', todos);
+                window.plugins.toast.showWithOptions({
+                    message: 'Todo Added',
+                    duration: '500',
+                    position: 'bottom'
+                }, function (args) {
+                    console.log('success ', args.event);
+                }, function (error) {
+                    console.error('toast error: ', error);
+                });
             }
         };
 
